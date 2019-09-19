@@ -6,3 +6,7 @@ Vue.config.productionTip = false
 new Vue({
   render: h => h(App),
 }).$mount('#app')
+
+Vue.filter('kb', val => {
+  return Math.floor(val/1024);  
+});
