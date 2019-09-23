@@ -85,8 +85,6 @@ export default {
 
             let output = Converter.convert_string([new ConvertableTextFile('exported.add', this.currentAdd.export().serialize())], convo);
 
-            console.log(output.output_files);
-
             if(output.output_files.length)
                 this.download(`result.${output.output_files[0].container}`, output.output_files[0].data);
 

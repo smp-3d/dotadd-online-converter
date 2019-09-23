@@ -15,9 +15,13 @@
         {{ this.$attrs.add.description }}
     </div>
     <div style="padding-top: 20px; padding-bottom:30px">Order: {{ 
-        this.$attrs.add.maxAmbisonicOrder() 
+            (this.$attrs.add.decoder.matrices.length)? 
+            (this.$attrs.add.decoder.matrices[0].matrix)? 
+            (this.$attrs.add.decoder.matrices[0].matrix.length)?
+            this.$attrs.add.maxAmbisonicOrder() : "0" : "0" : "0"
         }} | Normalisation: {{ 
-            this.$attrs.add.decoder.matrices[0].getNormalisation().toUpperCase()
+            (this.$attrs.add.decoder.matrices.length)?
+            this.$attrs.add.decoder.matrices[0].getNormalisation().toUpperCase() : "0"
         }} | Outputs: {{
             this.$attrs.add.decoder.output.channels.length
         }} | Filterbands: {{
@@ -34,16 +38,10 @@
 
 <script>
 
-import {ADD} from 'dotadd.js'
-
 export default {
 
     methods: {
         deleteMe(){
-
-            let add = new ADD();
-
-            console.log("delete: " + this.$attrs.id);
             this.$emit('delete', this.$attrs.id);
         },
         doExport(){

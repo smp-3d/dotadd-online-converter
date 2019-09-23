@@ -35,8 +35,6 @@ export default {
         ], 
         new ConverterOptions());
 
-        console.log(results);
-
         results.results.forEach(r => {
           r._valid = r.valid();
         });
@@ -47,10 +45,6 @@ export default {
 
         self.files.push(...results.results);
         self.files.push(...results.incomplete_results);
-
-        if(results.messages.length)
-            // eslint-disable-next-line
-            console.log(results.messages);
 
     }
   },
@@ -67,12 +61,10 @@ export default {
     },
 
     doDelete(id){
-      console.log(id);
       this.files.splice(id, 1);
     },
 
     doExport(id){
-      console.log(id);
       this.$refs.expdialog.show(this.files[id]);
     }
 
