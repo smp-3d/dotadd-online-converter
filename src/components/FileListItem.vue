@@ -21,11 +21,11 @@
             this.$attrs.add.maxAmbisonicOrder() : "0" : "0" : "0"
         }} | Normalisation: {{ 
             (this.$attrs.add.decoder.matrices.length)?
-            this.$attrs.add.decoder.matrices[0].getNormalisation().toUpperCase() : "0"
+            this.$attrs.add.decoder.matrices[0].getNormalization().toUpperCase() : "0"
         }} | Outputs: {{
             this.$attrs.add.decoder.output.channels.length
         }} | Filterbands: {{
-            this.$attrs.add.decoder.filter.length
+            this.$attrs.add.decoder.filters.length
         }}
         <div style="margin-top: 10px">
             <md-button v-on:click="doExport" style="float: right" class="md-dense md-raised md-primary">export</md-button>
