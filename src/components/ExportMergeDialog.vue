@@ -65,14 +65,12 @@ export default {
     methods:{
 
         beginExport(opts){
-            console.log(opts)
             this.showDialog = true;
             this.expall = opts.method;
             this.files = opts.files;
         },
 
         doExport(){
-            console.log(this.files);
             this.showDialog = false;
 
             if(this.expall){

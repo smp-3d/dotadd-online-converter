@@ -11,7 +11,7 @@
                     <md-option value="iem">IEM</md-option>
                     <md-option value="csv">CSV</md-option>
                     <md-option value="ambdec">AmbDec</md-option>
-                    <md-option value="ambix">Ambix</md-option>
+                    <md-option value="config">AmbiX</md-option>
                 </md-select>
                 </md-field>
                 <md-switch v-model="generateOutputChannels" value="false">Generate Output Channels</md-switch>

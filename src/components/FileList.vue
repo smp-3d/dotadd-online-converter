@@ -15,7 +15,6 @@
 import { Converter, ConvertableTextFile, ConverterOptions } from 'dotadd.tools';
 import FileListItem from './FileListItem';
 import ExportDialog from './ExportDialog';
-import MergeExportAll from './MergeExportAll';
 
 export default {
   data() {
@@ -126,8 +125,7 @@ export default {
 
   components: {
     FileListItem,
-    ExportDialog,
-    MergeExportAll
+    ExportDialog
   }
 };
 </script>
