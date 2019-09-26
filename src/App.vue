@@ -4,10 +4,11 @@
     <div style="visibility:hidden; opacity:0" id="dropzone">
       <div id="textnode">Drop files to .add</div>
     </div>
+
     <img alt="Vue logo" src="./assets/logo.png" width="100px"/>
-    <FileList ref="files"/>
     <Info msg=".add Online Converter"/>
-    <md-button :disabled="uploadDisabled" @click="upload">Upload</md-button>
+    <FileList ref="files"/>
+    
     </div>
   </div>
 </template>

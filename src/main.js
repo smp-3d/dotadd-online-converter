@@ -3,15 +3,17 @@ import App from './App.vue'
 
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
-import 'vue-material/dist/theme/default.css' // This line here
+import 'vue-material/dist/theme/default.css' 
+import { Logger } from 'dotadd.tools/build/Logger'
 
-import { Converter, ConverterOptions } from 'dotadd.toolset'
+import Toasted from 'vue-toasted'
 
 Vue.config.productionTip = false
 
-Vue.use(VueMaterial)
+Logger.prototype.verbose = true;
 
-Converter.convert_string([], new ConverterOptions());
+Vue.use(VueMaterial);
+Vue.use(Toasted);
 
 new Vue({
   render: h => h(App),

@@ -10,9 +10,10 @@
   "dependencies": {
     "core-js": "^2.6.5",
     "dotadd.js": "^0.2.2",
-    "dotadd.toolset": "github:smp-3d/dotadd.tools.js",
+    "dotadd.tools": "github:smp-3d/dotadd.tools",
     "vue": "^2.6.10",
-    "vue-material": "^1.0.0-beta-11"
+    "vue-material": "^1.0.0-beta-11",
+    "vue-toasted": "^1.1.27"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",

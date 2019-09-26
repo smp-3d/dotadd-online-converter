@@ -10,14 +10,17 @@
                     <md-option value="add">ADD</md-option>
                     <md-option value="iem">IEM</md-option>
                     <md-option value="csv">CSV</md-option>
-                    <md-option value="ambdec">Ambix</md-option>
+                    <md-option value="ambdec">AmbDec</md-option>
+                    <md-option value="ambix">Ambix</md-option>
                 </md-select>
                 </md-field>
                 <md-switch v-model="generateOutputChannels" value="false">Generate Output Channels</md-switch>
                 <div>
-                    <md-radio v-model="norm" value="n3d">N3D</md-radio>
-                    <md-radio v-model="norm" value="sn3d">SN3D</md-radio>
+                    <md-checkbox v-model="re_norm">Renormalize</md-checkbox>
+                    <md-radio v-model="re_norm_target" value="n3d" v-bind:disabled="!re_norm">N3D</md-radio>
+                    <md-radio v-model="re_norm_target" value="sn3d" v-bind:disabled="!re_norm">SN3D</md-radio>
                 </div>
+                <md-checkbox v-model="prettify">Prettify JSON based formats</md-checkbox>
             </md-tab>
                 <md-tab md-label="ADD DATA">
                 <md-field>
@@ -32,6 +35,14 @@
                     <label>Description</label>
                     <md-input v-model="description" placeholder="Description (unchanged)"></md-input>
                 </md-field>
+                <md-field>
+                <label for="norm">Normalization</label>
+                <md-select v-model="norm" name="norm" id="norm">
+                    <md-option value="unknown">unknown</md-option>
+                    <md-option value="sn3d">SN3D</md-option>
+                    <md-option value="n3d">N3D</md-option>
+                </md-select>
+                </md-field>
             </md-tab>
         </md-tabs>
         <md-dialog-actions>
@@ -45,7 +56,7 @@
 
 <script>
 import { ADD } from 'dotadd.js';
-import { Converter, ConverterOptions, ConverterOption, ConvertableTextFile } from 'dotadd.toolset'
+import { Converter, ConverterOptions, ConverterOption, ConvertableTextFile } from 'dotadd.tools'
 
 export default {
 
@@ -56,11 +67,14 @@ export default {
             showDialog: false,
             format: "add",
             generateOutputChannels: false,
-            norm: "n3d",
+            re_norm: false,
+            re_norm_target: "sn3d",
+            norm: "",
             name: "",
             description: "",
             author: "",
-            currentAdd: null
+            currentAdd: null,
+            prettify: true
         }
     },
 
@@ -81,21 +95,57 @@ export default {
             if(this.description != this.currentAdd.description || this.description === "")
                 convo.options.push(new ConverterOption('description', this.description))
 
+            if(this.prettify)
+                convo.options.push(new ConverterOption('prettify', true));
+
+            if(this.re_norm)
+                convo.options.push(new ConverterOption('reNorm', this.re_norm_target));
+
+            if(this.norm)
+                convo.options.push(new ConverterOption('norm', this.norm));
+
             convo.options.push(new ConverterOption('format', this.format));
 
-            let output = Converter.convert_string([new ConvertableTextFile('exported.add', this.currentAdd.export().serialize())], convo);
+            let output;
+
+            try {
+                output = Converter.convert_string([new ConvertableTextFile(this.currentFile.f.name, JSON.stringify(this.currentAdd))], convo);
+            } catch(e) {
+
+                this.$toasted.show("Error: " + e.message, {
+                    theme: "bubble", 
+	                position: "bottom-right", 
+	                duration : 7000
+                });
+
+                if(!this.currentAdd.valid()){
+                    for(let reason of this.currentAdd.inv_reasons){
+                        this.$toasted.show(reason, {
+                            theme: "bubble", 
+	                        position: "bottom-right", 
+	                        duration : 7000
+                        });
+                    }
+                }
+
+                return;
+            }
 
             if(output.output_files.length)
-                this.download(`result.${output.output_files[0].container}`, output.output_files[0].data);
+                this.download(`${
+                    this.currentFile.f.name.split('.').slice(0, -1).join('.')
+                    }.${output.output_files[0].container}`, output.output_files[0].data);
 
         },
 
-        show(add){
-            this.currentAdd = add;
+        show(file){
+            this.currentFile = file;
+            this.currentAdd = file.add;
             this.showDialog = true;
-            this.name = add.name;
-            this.description = add.description;
-            this.author = add.author;
+            this.name = file.add.name;
+            this.description = file.add.description;
+            this.author = file.add.author;
+            this.norm = file.add.decoder.matrices[0].normalization;
         },
 
         download(filename, text) {
