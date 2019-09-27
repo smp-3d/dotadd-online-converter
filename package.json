@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build && mv dist docs",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "core-js": "^2.6.5",
-    "dotadd.js": "^0.2.2",
+    "dotadd.js": "^0.2.3",
     "dotadd.tools": "github:smp-3d/dotadd.tools",
     "vue": "^2.6.10",
     "vue-material": "^1.0.0-beta-11",

@@ -1,9 +1,14 @@
 <template>
-  <div class= "file-list">
+  <div class="file-list">
     <ExportDialog ref="expdialog"></ExportDialog>
     <md-list>
       <md-list-item v-for="(file, index) in files" v-bind:key="file.lastModified">
-        <FileListItem v-bind:file="file" v-bind:id="index" v-on:delete="doDelete" v-on:export="doExport"/>
+        <FileListItem
+          v-bind:file="file"
+          v-bind:id="index"
+          v-on:delete="doDelete"
+          v-on:export="doExport"
+        />
       </md-list-item>
       <!--<MergeExportAll v-if="files.length > 1" v-bind:files="files"/>-->
     </md-list>
@@ -11,10 +16,9 @@
 </template>
 
 <script>
-
-import { Converter, ConvertableTextFile, ConverterOptions } from 'dotadd.tools';
-import FileListItem from './FileListItem';
-import ExportDialog from './ExportDialog';
+import { Converter, ConvertableTextFile, ConverterOptions } from "dotadd.tools";
+import FileListItem from "./FileListItem";
+import ExportDialog from "./ExportDialog";
 
 export default {
   data() {
@@ -26,101 +30,84 @@ export default {
     };
   },
 
-  mounted(){
-
+  mounted() {
     let self = this;
 
-    this.filereader.onload = (f) => {
+    this.filereader.onload = f => {
+      let results = Converter.convert_string(
+        [new ConvertableTextFile(self.current_file_name, f.target.result)],
+        new ConverterOptions()
+      );
 
-        let results = Converter.convert_string([
-            new ConvertableTextFile(self.current_file_name, f.target.result)
-        ], 
-        new ConverterOptions());
+      results.results.forEach(r => {
+        r._valid = r.valid();
+      });
 
-        results.results.forEach(r => {
-          r._valid = r.valid();
-        });
+      results.incomplete_results.forEach(r => {
+        r._valid = r.valid();
+      });
 
-        results.incomplete_results.forEach(r => {
-          r._valid = r.valid();
-        });
-
-        self.files.push(...results.results);
-        self.files.push(...results.incomplete_results);
-
-    }
+      self.files.push(...results.results);
+      self.files.push(...results.incomplete_results);
+    };
   },
 
   methods: {
-
     addFiles(...f) {
+      let self = this;
 
-        let self = this;
+      f.forEach(file => {
+        let reader = new FileReader();
 
-        f.forEach(file => {
+        reader.onload = red => {
+          let results;
 
-            let reader = new FileReader();
+          try {
+            results = Converter.convert_string(
+              [new ConvertableTextFile(file.name, red.target.result)],
+              new ConverterOptions()
+            );
+          } catch (e) {
+            console.log(e);
 
-            reader.onload = (red) => {
+            self.$toasted.show("Error: " + e.message, {
+              theme: "bubble",
+              position: "bottom-right",
+              duration: 5000
+            });
+            return;
+          }
 
-              let results;
+          let res = {};
 
-                try {
+          if (results.results.length) {
+            res = {
+              add: results.results.shift(),
+              f: file
+            };
+          } else if (results.incomplete_results.length) {
+            res = {
+              add: results.incomplete_results.shift(),
+              f: file
+            };
+          }
 
-                  results = Converter.convert_string([
-                      new ConvertableTextFile(file.name, red.target.result)
-                  ], 
-                  new ConverterOptions());
-                
-                } catch (e) {
-                  self.$toasted.show("Error: " + e.message, {
-                    theme: "bubble", 
-	                  position: "bottom-right", 
-	                  duration : 5000
-                  });
-                  return;
-                }
+          res.valid = res.add.valid();
 
-                console.log(results);
+          self.files.push(res);
+        };
 
-                let res = {};
-
-                if(results.results.length){
-                    res = {
-                        add: results.results.shift(),
-                        f: file,
-                    }
-                } else if(results.incomplete_results.length) {
-                    res = {
-                        add: results.incomplete_results.shift(),
-                        f: file
-                    }
-                }
-
-                res.valid = res.add.valid();
-
-                self.files.push(res);
-
-                console.log(res);
-            }
-
-
-
-            reader.readAsText(file);
-
-
-        })
-
+        reader.readAsText(file);
+      });
     },
 
-    doDelete(id){
+    doDelete(id) {
       this.files.splice(id, 1);
     },
 
-    doExport(id){
+    doExport(id) {
       this.$refs.expdialog.show(this.files[id]);
     }
-
   },
 
   components: {
@@ -132,7 +119,7 @@ export default {
 
 <style>
 .file-list {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 </style>
