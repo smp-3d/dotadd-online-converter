@@ -90,6 +90,13 @@ export default {
               add: results.incomplete_results.shift(),
               f: file
             };
+          } else {
+            self.$toasted.show("Could not read file.", {
+              theme: "bubble",
+              position: "bottom-right",
+              duration: 5000
+            });
+            return;
           }
 
           res.valid = res.add.valid();

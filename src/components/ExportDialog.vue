@@ -85,6 +85,17 @@ export default {
     doExport() {
       this.showDialog = false;
 
+      if (!this.currentAdd.valid()) {
+        for (let reason of this.currentAdd.inv_reasons) {
+          this.$toasted.show(reason, {
+            theme: "bubble",
+            position: "bottom-right",
+            duration: 7000
+          });
+        }
+        return;
+      }
+
       let convo = new ConverterOptions();
 
       if (this.author != this.currentAdd.author || this.author === "")

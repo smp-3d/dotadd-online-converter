@@ -5,12 +5,6 @@
       <p>
         Drop files here to convert to or from .add
         <br />or other common Ambisonics decoding matrix formats.
-        <a
-          href="https://github.com/smp-3d/dotadd/blob/master/dotadd-spec/dotadd-spec.pdf"
-          target="_blank"
-          rel="noopener"
-        >specifiction sheet</a>
-.
       </p>
     </div>
     <div id="footer">
